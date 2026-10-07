@@ -32,17 +32,43 @@ export function buildPrompt(mode, context) {
 
   switch (mode) {
     case 'explainStep':
-      return `You are a CS tutor. Topic: ${topic}. Current step: "${step}". Explain what happened in this step in simple language. Keep it concise (2-3 sentences). Use markdown.`
-    case 'freeQuestion':
-      return `You are a CS tutor. Topic: ${topic}. Context: "${step}". Student question: "${context.userInput ?? ''}". Answer clearly.`
+      return `You are a Computer Science tutor on CSVerse AI explaining a visual algorithm step.
+
+Topic: ${topic}
+Visual Step Description: "${step}"
+
+Explain in 2-4 sentences exactly what is happening in this step — which elements are being compared, swapped, moved, or updated, and why. Be precise and educational. Use markdown.`
+
+    case 'freeQuestion': {
+      const question = (context.userInput ?? '').trim()
+      return `You are a Computer Science expert tutor on CSVerse AI. A student asked you a specific question. You MUST answer their EXACT question directly and accurately.
+
+Current Topic Context: ${topic}
+Student's Question: "${question}"
+
+Rules:
+- Answer the student's EXACT question. Do not give a generic response.
+- If the question is about a CS concept (algorithm, data structure, complexity, SQL, OS, networking), give a thorough technical explanation with Big-O complexity where relevant.
+- If the question asks "what is X", define X clearly with examples.
+- If the question asks "how does X work", explain the mechanism step by step.
+- If the question asks "difference between X and Y", compare them directly in a table or list.
+- If the question asks "why", explain the reasoning clearly.
+- Use markdown formatting: **bold** for key terms, bullet points for lists, \`code\` for syntax.
+- Keep the answer focused and under 300 words unless the question genuinely needs more.
+- Do NOT start with "Great question!" or similar filler phrases.`
+    }
+
     case 'explainCode':
-      return `You are a CS tutor. Explain this ${topic} code:\n\n\`\`\`\n${context.userInput ?? ''}\n\`\`\``
+      return `Explain the following ${topic} code snippet step-by-step for a Computer Science student:\n\n\`\`\`\n${context.userInput ?? ''}\n\`\`\``
+
     case 'generateQuiz':
-      return `Generate 5 MCQs about ${topic}. Format as JSON array: [{"id":"q1","text":"..","options":[".."],"correctIndex":0,"explanation":".."}]`
+      return `Generate 5 high-quality multiple choice questions about ${topic}. Format as JSON array: [{"id":"q1","text":"..","options":[".."],"correctIndex":0,"explanation":".."}]`
+
     case 'interviewPrep':
-      return `Generate 3 interview questions about ${topic} with answers. Format as JSON array: [{"id":"iq1","question":"..","answer":"..","difficulty":"Easy"}]`
+      return `Generate 3 real-world technical interview questions about ${topic} with answers. Format as JSON array: [{"id":"iq1","question":"..","answer":"..","difficulty":"Easy"}]`
+
     default:
-      return `You are a CS tutor. Topic: ${topic}. ${context.userInput ?? ''}`
+      return `Answer this Computer Science question clearly and directly: "${context.userInput ?? ''}" (Topic: ${topic})`
   }
 }
 

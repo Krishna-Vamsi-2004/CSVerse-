@@ -5,7 +5,7 @@ import { MODULE_REGISTRY } from '../data/moduleRegistry'
 import {
   HiLightningBolt, HiChartBar, HiArrowRight, HiSearch,
   HiX, HiChip, HiDatabase, HiGlobe, HiDesktopComputer,
-  HiSparkles, HiPlay, HiCode, HiAcademicCap, HiChevronRight,
+  HiSparkles, HiPlay, HiAcademicCap, HiBookOpen,
 } from 'react-icons/hi'
 
 const LIVE_VIZ = new Set(['dsa', 'dbms'])
@@ -18,10 +18,10 @@ const MOD_ICONS = {
 }
 
 const MOD_COLORS = {
-  dsa:        { border: 'border-[#180060]/20', bg: 'bg-[#180060]/5', icon: 'text-[#180060]', badge: 'bg-[#180060] text-white', tag: 'bg-[#180060]/10 text-[#180060]' },
-  dbms:       { border: 'border-[#180018]/20', bg: 'bg-[#180018]/5', icon: 'text-[#180018]', badge: 'bg-[#180018] text-white', tag: 'bg-[#180018]/10 text-[#180018]' },
-  networking: { border: 'border-[#487890]/20', bg: 'bg-[#487890]/5', icon: 'text-[#487890]', badge: 'bg-[#487890] text-white', tag: 'bg-[#487890]/10 text-[#487890]' },
-  os:         { border: 'border-[#180060]/20', bg: 'bg-[#180060]/5', icon: 'text-[#180060]', badge: 'bg-[#180060] text-white', tag: 'bg-[#180060]/10 text-[#180060]' },
+  dsa:        { border: 'border-red-200', bg: 'bg-red-50/60', icon: 'text-red-600', badge: 'bg-red-600 text-white', tag: 'bg-red-100 text-red-700' },
+  dbms:       { border: 'border-red-200', bg: 'bg-red-50/60', icon: 'text-red-600', badge: 'bg-red-600 text-white', tag: 'bg-red-100 text-red-700' },
+  networking: { border: 'border-red-200', bg: 'bg-red-50/60', icon: 'text-red-600', badge: 'bg-red-600 text-white', tag: 'bg-red-100 text-red-700' },
+  os:         { border: 'border-red-200', bg: 'bg-red-50/60', icon: 'text-red-600', badge: 'bg-red-600 text-white', tag: 'bg-red-100 text-red-700' },
 }
 
 const ALL_TOPICS = MODULE_REGISTRY.flatMap((mod) =>
@@ -30,12 +30,12 @@ const ALL_TOPICS = MODULE_REGISTRY.flatMap((mod) =>
 
 function SearchResults({ results, onClose }) {
   if (!results.length) return (
-    <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-[#180060]/15 rounded-[13px] shadow-lg z-50 px-4 py-6 text-center">
-      <p className="text-xs text-[#487890] font-heading font-medium">No matching CS topics found</p>
+    <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-red-200 rounded-[13px] shadow-lg z-50 px-4 py-6 text-center">
+      <p className="text-xs text-slate-500 font-heading font-medium">No matching CS topics found</p>
     </div>
   )
   return (
-    <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-[#180060]/15 rounded-[13px] shadow-xl z-50 overflow-hidden max-h-72 overflow-y-auto">
+    <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-red-200 rounded-[13px] shadow-xl z-50 overflow-hidden max-h-72 overflow-y-auto">
       {results.map((r) => {
         const colors = MOD_COLORS[r.moduleId] ?? MOD_COLORS.dsa
         return (
@@ -43,12 +43,12 @@ function SearchResults({ results, onClose }) {
             key={`${r.moduleId}-${r.id}`}
             to={`/app/${r.moduleId}/${r.id}`}
             onClick={onClose}
-            className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-red-50/50 transition-colors border-b border-slate-100 last:border-0"
           >
-            <HiChip className="w-5 h-5 text-[#180060] shrink-0" />
+            <HiChip className="w-5 h-5 text-red-600 shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold font-heading text-[#180018] truncate">{r.label}</p>
-              <p className="text-[11px] text-[#487890] font-body">{r.moduleLabel}</p>
+              <p className="text-xs font-bold font-heading text-slate-900 truncate">{r.label}</p>
+              <p className="text-[11px] text-slate-500 font-body">{r.moduleLabel}</p>
             </div>
             <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded-[7px] shrink-0 ${colors.tag}`}>
               {r.moduleId.toUpperCase()}
@@ -57,58 +57,6 @@ function SearchResults({ results, onClose }) {
         )
       })}
     </div>
-  )
-}
-
-function ModuleCard({ mod }) {
-  const isLive  = LIVE_VIZ.has(mod.id)
-  const colors  = MOD_COLORS[mod.id] ?? MOD_COLORS.dsa
-  const Icon    = MOD_ICONS[mod.id] ?? HiChip
-
-  return (
-    <Link
-      to={`/app/${mod.id}`}
-      className={`group flex flex-col bg-white rounded-[13px] border p-6 hover:shadow-xl transition-all ${colors.border}`}
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-12 h-12 rounded-[11px] flex items-center justify-center ${colors.bg} border border-[#180060]/10`}>
-          <Icon className={`text-2xl ${colors.icon}`} />
-        </div>
-        <div className="flex flex-col items-end gap-1 font-mono">
-          <span className="text-[10px] font-bold text-[#487890] uppercase tracking-wider">
-            Phase {mod.phase}
-          </span>
-          {isLive ? (
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-[7px] ${colors.badge}`}>
-              3D Live
-            </span>
-          ) : (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-[7px] bg-[#90c0d8] text-[#180018]">
-              AI Active
-            </span>
-          )}
-        </div>
-      </div>
-
-      <h3 className="font-heading font-bold text-lg text-[#180018] mb-2 group-hover:text-[#180060] transition-colors flex items-center justify-between">
-        <span>{mod.label}</span>
-        <HiChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-      </h3>
-
-      <p className="text-xs text-[#303048] mb-4 font-body leading-relaxed flex-1">
-        {mod.id === 'dsa' && 'Arrays, Linked Lists, Stacks, Queues, Sorting & Search algorithms with 3D memory visualization.'}
-        {mod.id === 'dbms' && 'SQL basics, JOIN visualizers, Normalization, ACID transactions, and B-Tree indexing.'}
-        {mod.id === 'networking' && 'OSI 7-layer model, TCP/IP stack, Packet flow animations, DNS resolution, and security.'}
-        {mod.id === 'os' && 'CPU scheduling algorithms, Process synchronization, Memory management, and Virtual Memory.'}
-      </p>
-
-      <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-heading font-semibold text-[#180060]">
-        <span>{mod.topics.length} Interactive Topics</span>
-        <span className="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
-          Open Module <HiArrowRight className="w-3.5 h-3.5" />
-        </span>
-      </div>
-    </Link>
   )
 }
 
@@ -125,39 +73,44 @@ export default function HomePage() {
   }, [query])
 
   return (
-    <div className="space-y-10 max-w-[1200px] mx-auto pb-12 font-body">
-      
-      {/* Hero Welcome Banner */}
-      <div className="td-navy-card p-8 md:p-12 rounded-[13px] relative overflow-hidden">
-        <div className="max-w-2xl space-y-4 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[#90c0d8] text-xs font-mono font-bold uppercase tracking-wider border border-[#90c0d8]/30">
-            <HiSparkles className="w-4 h-4" /> CSVerse AI Learning Engine v2.0
+    <div className="min-h-screen bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 py-12 md:py-20 space-y-16">
+        
+        {/* Hero Section */}
+        <div className="text-center space-y-6 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-red-200 text-red-600 text-sm font-mono font-bold shadow-sm">
+            <HiSparkles className="w-5 h-5 text-red-600" /> CSVerse AI Learning Platform v2.0
           </div>
-          <h1 className="td-h2 text-white">
-            Master Computer Science Visually.
+          
+          <h1 className="text-5xl md:text-7xl font-heading font-black text-slate-900 leading-tight">
+            Master Computer Science
+            <span className="block text-red-600">
+              Visually
+            </span>
           </h1>
-          <p className="text-sm md:text-base text-slate-200 leading-relaxed font-body">
-            Explore interactive algorithm simulations, query execution, and Gemini AI voice explanations across 4 core CS domains.
+          
+          <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto">
+            Interactive 3D visualizations, comprehensive theory, proven patterns, and practice tests across 4 core CS domains.
           </p>
 
           {/* Search Box */}
-          <div className="relative pt-2 max-w-lg">
-            <div className="flex items-center gap-2 bg-white rounded-[13px] px-4 py-3 border border-white/20 shadow-lg text-[#180018]">
-              <HiSearch className="w-5 h-5 text-[#180060] shrink-0" />
+          <div className="relative max-w-2xl mx-auto pt-4">
+            <div className="flex items-center gap-3 bg-white rounded-2xl px-6 py-4 border-2 border-red-200 shadow-lg hover:shadow-xl focus-within:border-red-600 transition-all">
+              <HiSearch className="w-6 h-6 text-red-600" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => setIsFocused(true)}
                 placeholder="Search topics (Bubble Sort, SQL JOINs, OSI Model)..."
-                className="w-full bg-transparent text-xs md:text-sm text-[#180018] placeholder-[#487890] focus:outline-none font-body"
+                className="w-full bg-transparent text-base text-slate-900 placeholder-slate-400 focus:outline-none"
               />
               {query && (
                 <button
                   onClick={() => setQuery('')}
-                  className="p-1 text-[#487890] hover:text-[#180018]"
+                  className="p-1.5 text-slate-400 hover:text-slate-900 rounded-lg hover:bg-slate-100"
                 >
-                  <HiX className="w-4 h-4" />
+                  <HiX className="w-5 h-5" />
                 </button>
               )}
             </div>
@@ -170,110 +123,138 @@ export default function HomePage() {
             )}
           </div>
         </div>
-      </div>
 
-      {/* Quick Jump Quick-Start Visualizers */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between border-b border-[#180060]/10 pb-3">
-          <h2 className="font-heading font-bold text-xl text-[#180018] flex items-center gap-2">
-            <HiLightningBolt className="w-5 h-5 text-[#180060]" />
-            Quick-Start Visualizers
-          </h2>
-          <span className="text-xs text-[#487890] font-heading font-semibold uppercase tracking-wider">
-            Interactive Simulations
-          </span>
+        {/* 4 Main Modules - Large Cards */}
+        <div className="space-y-6">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-slate-900 mb-3">
+              Choose Your Learning Path
+            </h2>
+            <p className="text-slate-600 text-lg">
+              4 comprehensive modules with theory, visualizations, patterns & practice
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {MODULE_REGISTRY.map((mod) => {
+              const isLive = LIVE_VIZ.has(mod.id)
+              const colors = MOD_COLORS[mod.id] ?? MOD_COLORS.dsa
+              const Icon = MOD_ICONS[mod.id] ?? HiChip
+
+              return (
+                <Link
+                  key={mod.id}
+                  to={`/app/${mod.id}`}
+                  className="group relative bg-white rounded-3xl border-2 border-red-100 hover:border-red-600 p-8 md:p-10 hover:shadow-2xl transition-all duration-300 overflow-hidden hover:scale-[1.02]"
+                >
+                  {/* Background Decoration */}
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/5 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity" />
+                  
+                  <div className="relative space-y-6">
+                    {/* Icon & Badge */}
+                    <div className="flex items-start justify-between">
+                      <div className="w-20 h-20 rounded-2xl flex items-center justify-center bg-red-50 border-2 border-red-200 shadow-lg group-hover:scale-110 transition-transform">
+                        <Icon className="text-4xl text-red-600" />
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        <span className="text-xs font-bold text-slate-500 font-mono uppercase tracking-wider px-3 py-1 bg-slate-100 rounded-full">
+                          Phase {mod.phase}
+                        </span>
+                        {isLive ? (
+                          <span className="text-xs font-bold px-3 py-1 rounded-full bg-red-600 text-white shadow-md">
+                            🚀 3D Live
+                          </span>
+                        ) : (
+                          <span className="text-xs font-bold px-3 py-1 rounded-full bg-slate-900 text-white shadow-md">
+                            🤖 AI Active
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <div>
+                      <h3 className="text-2xl md:text-3xl font-heading font-black text-slate-900 group-hover:text-red-600 transition-colors mb-2">
+                        {mod.label}
+                      </h3>
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {mod.id === 'dsa' && 'Master data structures and algorithms with step-by-step 3D memory visualizations and proven coding patterns.'}
+                        {mod.id === 'dbms' && 'Learn database fundamentals, SQL queries, JOIN operations, normalization, and transaction management.'}
+                        {mod.id === 'networking' && 'Understand network protocols, OSI model, TCP/IP stack, routing, and security fundamentals.'}
+                        {mod.id === 'os' && 'Explore operating system concepts: scheduling, memory management, synchronization, and file systems.'}
+                      </p>
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-4 gap-3">
+                      <div className="bg-red-50/80 rounded-xl p-3 text-center border border-red-100">
+                        <HiBookOpen className="w-6 h-6 text-red-600 mx-auto mb-1" />
+                        <p className="text-xs text-red-700 font-semibold">Theory</p>
+                      </div>
+                      <div className="bg-red-50/80 rounded-xl p-3 text-center border border-red-100">
+                        <HiPlay className="w-6 h-6 text-red-600 mx-auto mb-1" />
+                        <p className="text-xs text-red-700 font-semibold">Visual</p>
+                      </div>
+                      <div className="bg-red-50/80 rounded-xl p-3 text-center border border-red-100">
+                        <HiLightningBolt className="w-6 h-6 text-red-600 mx-auto mb-1" />
+                        <p className="text-xs text-red-700 font-semibold">Patterns</p>
+                      </div>
+                      <div className="bg-red-50/80 rounded-xl p-3 text-center border border-red-100">
+                        <HiAcademicCap className="w-6 h-6 text-red-600 mx-auto mb-1" />
+                        <p className="text-xs text-red-700 font-semibold">Practice</p>
+                      </div>
+                    </div>
+
+                    {/* CTA */}
+                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                      <span className="text-sm font-heading font-bold text-slate-500">
+                        {mod.topics.length} Interactive Topics
+                      </span>
+                      <span className="inline-flex items-center gap-2 text-base font-heading font-bold text-red-600 group-hover:gap-3 transition-all">
+                        Explore <HiArrowRight className="w-5 h-5 text-red-600" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link
-            to="/app/dsa/bubblesort"
-            className="p-5 rounded-[13px] bg-white border border-[#180060]/15 hover:border-[#180060] hover:shadow-md transition-all group flex flex-col justify-between"
-          >
-            <div className="space-y-2">
-              <div className="w-8 h-8 rounded-[9px] bg-[#180060] text-white flex items-center justify-center font-bold">
-                <HiChip className="w-4 h-4 text-[#90c0d8]" />
-              </div>
-              <h3 className="font-heading font-bold text-sm text-[#180018] group-hover:text-[#180060] transition-colors">
-                Bubble Sort Visualizer
-              </h3>
-              <p className="text-xs text-[#303048]">Step-by-step array comparison & swap engine.</p>
-            </div>
-            <span className="text-xs font-heading font-bold text-[#180060] pt-4 inline-flex items-center gap-1">
-              Launch <HiArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-            </span>
-          </Link>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+          <div className="text-center space-y-2">
+            <div className="text-4xl font-bold text-red-600">4</div>
+            <p className="text-sm text-slate-600 font-medium">Core Modules</p>
+          </div>
+          <div className="text-center space-y-2">
+            <div className="text-4xl font-bold text-red-600">100+</div>
+            <p className="text-sm text-slate-600 font-medium">Topics</p>
+          </div>
+          <div className="text-center space-y-2">
+            <div className="text-4xl font-bold text-red-600">3D</div>
+            <p className="text-sm text-slate-600 font-medium">Visualizations</p>
+          </div>
+          <div className="text-center space-y-2">
+            <div className="text-4xl font-bold text-red-600">AI</div>
+            <p className="text-sm text-slate-600 font-medium">Powered</p>
+          </div>
+        </div>
 
-          <Link
-            to="/app/dsa/arrays"
-            className="p-5 rounded-[13px] bg-white border border-[#180060]/15 hover:border-[#180060] hover:shadow-md transition-all group flex flex-col justify-between"
-          >
-            <div className="space-y-2">
-              <div className="w-8 h-8 rounded-[9px] bg-[#180018] text-white flex items-center justify-center font-bold">
-                <HiCode className="w-4 h-4 text-[#90c0d8]" />
-              </div>
-              <h3 className="font-heading font-bold text-sm text-[#180018] group-hover:text-[#180060] transition-colors">
-                Array Operations
-              </h3>
-              <p className="text-xs text-[#303048]">Memory insertion, deletion, and index lookups.</p>
-            </div>
-            <span className="text-xs font-heading font-bold text-[#180060] pt-4 inline-flex items-center gap-1">
-              Launch <HiArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-            </span>
-          </Link>
-
-          <Link
-            to="/app/dbms/sql-basics"
-            className="p-5 rounded-[13px] bg-white border border-[#180060]/15 hover:border-[#180060] hover:shadow-md transition-all group flex flex-col justify-between"
-          >
-            <div className="space-y-2">
-              <div className="w-8 h-8 rounded-[9px] bg-[#180060] text-white flex items-center justify-center font-bold">
-                <HiDatabase className="w-4 h-4 text-[#90c0d8]" />
-              </div>
-              <h3 className="font-heading font-bold text-sm text-[#180018] group-hover:text-[#180060] transition-colors">
-                SQL Query Visualizer
-              </h3>
-              <p className="text-xs text-[#303048]">Visual table query execution & filter engine.</p>
-            </div>
-            <span className="text-xs font-heading font-bold text-[#180060] pt-4 inline-flex items-center gap-1">
-              Launch <HiArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-            </span>
-          </Link>
-
+        {/* Progress Dashboard CTA */}
+        <div className="max-w-3xl mx-auto">
           <Link
             to="/app/progress"
-            className="p-5 rounded-[13px] bg-white border border-[#180060]/15 hover:border-[#180060] hover:shadow-md transition-all group flex flex-col justify-between"
+            className="block bg-white border-2 border-red-600 rounded-2xl p-8 text-slate-900 shadow-xl hover:shadow-2xl hover:border-red-700 transition-all group"
           >
-            <div className="space-y-2">
-              <div className="w-8 h-8 rounded-[9px] bg-[#487890] text-white flex items-center justify-center font-bold">
-                <HiChartBar className="w-4 h-4 text-white" />
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <h3 className="text-2xl font-heading font-bold text-slate-900 group-hover:text-red-600 transition-colors">Track Your Progress</h3>
+                <p className="text-slate-600 text-sm">View your learning journey, completion rates, and quiz scores</p>
               </div>
-              <h3 className="font-heading font-bold text-sm text-[#180018] group-hover:text-[#180060] transition-colors">
-                Progress Dashboard
-              </h3>
-              <p className="text-xs text-[#303048]">Track topic completion & quiz performance.</p>
+              <HiChartBar className="w-16 h-16 text-red-600 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all" />
             </div>
-            <span className="text-xs font-heading font-bold text-[#180060] pt-4 inline-flex items-center gap-1">
-              View Stats <HiArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-            </span>
           </Link>
-        </div>
-      </div>
-
-      {/* Modules Registry Cards Grid */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between border-b border-[#180060]/10 pb-3">
-          <h2 className="font-heading font-bold text-xl text-[#180018]">
-            Computer Science Learning Modules
-          </h2>
-          <span className="text-xs text-[#487890] font-heading font-semibold uppercase tracking-wider">
-            All 4 Domains
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {MODULE_REGISTRY.map((mod) => (
-            <ModuleCard key={mod.id} mod={mod} />
-          ))}
         </div>
       </div>
     </div>

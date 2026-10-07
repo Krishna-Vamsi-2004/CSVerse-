@@ -9,13 +9,10 @@ const LandingPage             = lazy(() => import('../pages/LandingPage'))
 // App pages — all nested under /app with AppLayout
 const HomePage                = lazy(() => import('../pages/HomePage'))
 const DSAIndexPage            = lazy(() => import('../pages/DSAIndexPage'))
-const DSATopicPage            = lazy(() => import('../pages/DSATopicPage'))
+const ComprehensiveTopicPage  = lazy(() => import('../pages/ComprehensiveTopicPage'))
 const DBMSIndexPage           = lazy(() => import('../pages/DBMSIndexPage'))
-const DBMSTopicPage           = lazy(() => import('../pages/DBMSTopicPage'))
 const NetworkingIndexPage     = lazy(() => import('../pages/NetworkingIndexPage'))
-const NetworkingTopicPage     = lazy(() => import('../pages/NetworkingTopicPage'))
 const OSIndexPage             = lazy(() => import('../pages/OSIndexPage'))
-const OSTopicPage             = lazy(() => import('../pages/OSTopicPage'))
 const ProgressDashboardPage   = lazy(() => import('../pages/ProgressDashboardPage'))
 const QuizPage                = lazy(() => import('../pages/QuizPage'))
 const NotFoundPage            = lazy(() => import('../pages/NotFoundPage'))
@@ -31,13 +28,13 @@ export default function AppRoutes() {
         <Route path="/app" element={<AppLayout />}>
           <Route index                            element={<HomePage />} />
           <Route path="dsa"                       element={<DSAIndexPage />} />
-          <Route path="dsa/:topicId"              element={<DSATopicPage />} />
+          <Route path="dsa/:topicId"              element={<ComprehensiveTopicPage moduleId="dsa" />} />
           <Route path="dbms"                      element={<DBMSIndexPage />} />
-          <Route path="dbms/:topicId"             element={<DBMSTopicPage />} />
+          <Route path="dbms/:topicId"             element={<ComprehensiveTopicPage moduleId="dbms" />} />
           <Route path="networking"                element={<NetworkingIndexPage />} />
-          <Route path="networking/:topicId"       element={<NetworkingTopicPage />} />
+          <Route path="networking/:topicId"       element={<ComprehensiveTopicPage moduleId="networking" />} />
           <Route path="os"                        element={<OSIndexPage />} />
-          <Route path="os/:topicId"               element={<OSTopicPage />} />
+          <Route path="os/:topicId"               element={<ComprehensiveTopicPage moduleId="os" />} />
           <Route path=":moduleId/:topicId/quiz"   element={<QuizPage />} />
           <Route path="progress"                  element={<ProgressDashboardPage />} />
         </Route>

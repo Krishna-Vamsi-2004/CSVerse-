@@ -10,6 +10,7 @@ export function useAIEngine(moduleId = 'dsa', topicId = 'arrays') {
   const [error, setError] = useState(null)
   const pendingRef = useRef(false)
   const debounceRef = useRef(null)
+  const currentRequestRef = useRef(0) // Track request order
 
   const handleError = useCallback((err) => {
     console.error('[useAIEngine] AI Tutor Error:', err)
@@ -24,37 +25,62 @@ export function useAIEngine(moduleId = 'dsa', topicId = 'arrays') {
 
   const explainStep = useCallback(async (stepDescription) => {
     if (pendingRef.current) return
+    
+    const requestId = ++currentRequestRef.current
     setError(null)
+    setResponse('') // Clear old response immediately
     setIsLoading(true)
     pendingRef.current = true
+    
     try {
       const prompt = buildPrompt('explainStep', { moduleId, topicId, stepDescription })
       const { text } = await callGemini(prompt)
-      setResponse(text)
+      
+      // Only update if this is still the latest request
+      if (requestId === currentRequestRef.current) {
+        setResponse(text)
+      }
     } catch (err) {
-      handleError(err)
+      if (requestId === currentRequestRef.current) {
+        handleError(err)
+      }
     } finally {
-      setIsLoading(false)
-      pendingRef.current = false
+      if (requestId === currentRequestRef.current) {
+        setIsLoading(false)
+        pendingRef.current = false
+      }
     }
   }, [moduleId, topicId, handleError])
 
   const askQuestion = useCallback((question) => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
+    
     debounceRef.current = setTimeout(async () => {
       if (pendingRef.current) return
+      
+      const requestId = ++currentRequestRef.current
       setError(null)
+      setResponse('') // Clear old response immediately
       setIsLoading(true)
       pendingRef.current = true
+      
       try {
         const prompt = buildPrompt('freeQuestion', { moduleId, topicId, userInput: question })
         const { text } = await callGemini(prompt)
-        setResponse(text)
+        
+        // Only update if this is still the latest request
+        if (requestId === currentRequestRef.current) {
+          setResponse(text)
+        }
       } catch (err) {
-        handleError(err)
+        if (requestId === currentRequestRef.current) {
+          handleError(err)
+        }
       } finally {
-        setIsLoading(false)
-        pendingRef.current = false
+        if (requestId === currentRequestRef.current) {
+          setIsLoading(false)
+          pendingRef.current = false
+        }
       }
     }, 300)
   }, [moduleId, topicId, handleError])

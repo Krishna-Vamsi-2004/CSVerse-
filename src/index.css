@@ -1,15 +1,21 @@
 @import "tailwindcss";
 
-/* ── Measured Tokens & Design System (ToDesktop Feel) ── */
+/* ── Measured Tokens & Design System (H&M White & Red Aesthetic) ── */
 :root {
   --td-bg: #ffffff;
-  --td-text: #000000;
-  --td-heading: #180018;
-  --td-accent: #180018;
-  --td-dark-blue: #303048;
-  --td-deep-navy: #180060;
-  --td-sky-blue: #90c0d8;
-  --td-steel-blue: #487890;
+  --td-text: #0f0f0f;
+  --td-heading: #0f0f0f;
+  --td-accent: #E50010; /* H&M Signature Red */
+  --td-red-hover: #C4000E;
+  --td-red-light: #FEF2F2;
+  --td-dark-blue: #111111;
+  --td-deep-navy: #E50010;
+  --td-sky-blue: #f87171;
+  --td-steel-blue: #dc2626;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -36,32 +42,32 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 
 /* ── Measured Palette Utility Classes ── */
-.bg-td-accent { background-color: #180018; }
-.bg-td-dark-blue { background-color: #303048; }
-.bg-td-navy { background-color: #180060; }
-.bg-td-sky { background-color: #90c0d8; }
-.bg-td-steel { background-color: #487890; }
+.bg-td-accent { background-color: #E50010; }
+.bg-td-dark-blue { background-color: #111111; }
+.bg-td-navy { background-color: #E50010; }
+.bg-td-sky { background-color: #fef2f2; }
+.bg-td-steel { background-color: #dc2626; }
 
-.text-td-accent { color: #180018; }
-.text-td-dark-blue { color: #303048; }
-.text-td-navy { color: #180060; }
-.text-td-sky { color: #90c0d8; }
-.text-td-steel { color: #487890; }
+.text-td-accent { color: #E50010; }
+.text-td-dark-blue { color: #111111; }
+.text-td-navy { color: #E50010; }
+.text-td-sky { color: #dc2626; }
+.text-td-steel { color: #b91c1c; }
 
-.border-td-accent { border-color: #180018; }
-.border-td-dark-blue { border-color: rgba(48, 48, 72, 0.2); }
-.border-td-navy { border-color: #180060; }
-.border-td-sky { border-color: #90c0d8; }
-.border-td-steel { border-color: #487890; }
+.border-td-accent { border-color: #E50010; }
+.border-td-dark-blue { border-color: rgba(17, 17, 17, 0.2); }
+.border-td-navy { border-color: #E50010; }
+.border-td-sky { border-color: #fca5a5; }
+.border-td-steel { border-color: #dc2626; }
 
 /* ── Typography Tokens ── */
 .td-h1 {
   font-family: 'Space Grotesk', 'Aeonik Pro', sans-serif;
   font-size: 41px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: -1.11px;
   line-height: 1.14;
-  color: #180018;
+  color: #0f0f0f;
 }
 @media (min-width: 768px) {
   .td-h1 {
@@ -72,10 +78,10 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .td-h2 {
   font-family: 'Space Grotesk', 'Aeonik Pro', sans-serif;
   font-size: 32px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: -0.8px;
   line-height: 1.2;
-  color: #180018;
+  color: #0f0f0f;
 }
 @media (min-width: 768px) {
   .td-h2 {
@@ -87,16 +93,16 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   line-height: 1.63;
-  color: #303048;
+  color: #333333;
 }
 
 .td-eyebrow {
   font-family: 'Inter', sans-serif;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #487890;
+  letter-spacing: 0.1em;
+  color: #E50010;
 }
 
 /* ── Layout & Spacing Tokens ── */
@@ -127,43 +133,45 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .td-card {
   background-color: #ffffff;
   border-radius: 12px;
-  border: 1px solid rgba(24, 0, 96, 0.12);
-  box-shadow: rgba(255, 255, 255, 0.6) 0px 0.5px 0.5px 0px inset, rgba(24, 0, 96, 0.08) 0px 16px 56px 0px, rgba(5, 6, 27, 0.04) 0px 4px 16px 0px;
-  transition: transform 200ms ease, box-shadow 200ms ease;
+  border: 1px solid rgba(229, 0, 16, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 }
 .td-card:hover {
-  box-shadow: rgba(255, 255, 255, 0.8) 0px 0.5px 0.5px 0px inset, rgba(24, 0, 96, 0.14) 0px 20px 64px 0px, rgba(24, 0, 96, 0.08) 0px 6px 24px 0px;
+  transform: translateY(-2px);
+  border-color: rgba(229, 0, 16, 0.4);
+  box-shadow: 0 12px 36px rgba(229, 0, 16, 0.08);
 }
 
 .td-navy-card {
-  background-color: #180060;
+  background-color: #E50010;
   color: #ffffff;
   border-radius: 13px;
-  border: 1px solid rgba(144, 192, 216, 0.25);
-  box-shadow: rgba(24, 0, 96, 0.3) 0px 20px 60px 0px;
+  border: 1px solid #C4000E;
+  box-shadow: rgba(229, 0, 16, 0.3) 0px 16px 48px 0px;
 }
 
 .td-accent-card {
-  background-color: #180018;
+  background-color: #111111;
   color: #ffffff;
   border-radius: 13px;
-  border: 1px solid rgba(144, 192, 216, 0.2);
-  box-shadow: rgba(24, 0, 24, 0.35) 0px 20px 60px 0px;
+  border: 1px solid rgba(229, 0, 16, 0.3);
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 20px 60px 0px;
 }
 
 .td-blue-tint {
-  background: linear-gradient(135deg, rgba(24, 0, 96, 0.03) 0%, rgba(144, 192, 216, 0.09) 100%);
-  border: 1px solid rgba(24, 0, 96, 0.1);
+  background: linear-gradient(135deg, rgba(229, 0, 16, 0.03) 0%, rgba(254, 242, 242, 0.8) 100%);
+  border: 1px solid rgba(229, 0, 16, 0.15);
 }
 
-/* ── Buttons Tokens ── */
+/* ── Buttons Tokens (H&M Red & White) ── */
 .td-btn-primary {
-  background-color: #180018;
+  background-color: #E50010;
   color: #ffffff;
   border-radius: 13px;
   padding: 12px 24px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -172,29 +180,29 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   cursor: pointer;
   text-decoration: none;
   min-height: 44px;
+  border: none;
 }
 .td-btn-primary:hover {
-  background-color: #180060;
-  transform: translateY(-1px);
-  filter: brightness(1.08);
+  background-color: #C4000E;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(229, 0, 16, 0.3);
 }
 .td-btn-primary:active {
-  transform: translateY(0px);
-  filter: brightness(0.95);
+  transform: translateY(0px) scale(0.98);
 }
 .td-btn-primary:focus-visible {
-  outline: 2px solid #180060;
+  outline: 2px solid #E50010;
   outline-offset: 2px;
 }
 
 .td-btn-secondary {
-  background-color: transparent;
-  color: #180018;
-  border: 1px solid rgba(24, 0, 96, 0.25);
+  background-color: #ffffff;
+  color: #0f0f0f;
+  border: 1.5px solid #E50010;
   border-radius: 13px;
   padding: 12px 24px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -205,16 +213,16 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   min-height: 44px;
 }
 .td-btn-secondary:hover {
-  background-color: rgba(144, 192, 216, 0.15);
-  border-color: #180060;
-  color: #180060;
-  transform: translateY(-1px);
+  background-color: #FEF2F2;
+  color: #E50010;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 16px rgba(229, 0, 16, 0.12);
 }
 .td-btn-secondary:active {
-  transform: translateY(0px);
+  transform: translateY(0px) scale(0.98);
 }
 .td-btn-secondary:focus-visible {
-  outline: 2px solid #180060;
+  outline: 2px solid #E50010;
   outline-offset: 2px;
 }
 

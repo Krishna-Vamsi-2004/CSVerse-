@@ -1,6 +1,7 @@
 // src/components/AIChatPanel.jsx
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useAIEngine } from '../hooks/useAIEngine'
+import { getFallbackAnswer } from '../utils/aiFallback'
 import {
   HiSparkles, HiPaperAirplane, HiRefresh,
   HiClipboard, HiCheck, HiX,
@@ -9,15 +10,19 @@ import LoadingSpinner from './LoadingSpinner'
 
 // Inline markdown helper
 function InlineMarkdown({ text }) {
-  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g)
+  if (!text) return null
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g)
   return (
     <>
       {parts.map((part, i) => {
-        if (part.startsWith('**') && part.endsWith('**'))
-          return <strong key={i} className="text-[#180018] font-semibold">{part.slice(2, -2)}</strong>
-        if (part.startsWith('`') && part.endsWith('`'))
+        if (!part) return null
+        if (part.startsWith('**') && part.endsWith('**') && part.length > 4)
+          return <strong key={i} className="text-slate-900 font-bold">{part.slice(2, -2)}</strong>
+        if (part.startsWith('*') && part.endsWith('*') && part.length > 2)
+          return <em key={i} className="text-slate-800 italic">{part.slice(1, -1)}</em>
+        if (part.startsWith('`') && part.endsWith('`') && part.length > 2)
           return (
-            <code key={i} className="bg-[#180060]/10 px-1 py-0.5 rounded text-xs font-mono text-[#180060] font-semibold">
+            <code key={i} className="bg-red-50 text-red-700 px-1 py-0.5 rounded text-xs font-mono font-semibold border border-red-200">
               {part.slice(1, -1)}
             </code>
           )
@@ -29,23 +34,42 @@ function InlineMarkdown({ text }) {
 
 function SimpleMarkdown({ text }) {
   if (!text) return null
+  const cleaned = text.replace(/\+\+([^+]+)\*\*/g, '**$1**')
+
   return (
     <div className="space-y-1.5 font-body">
-      {text.split('\n').map((line, i) => {
-        if (line.trim().startsWith('- ') || line.trim().startsWith('* '))
+      {cleaned.split('\n').map((line, i) => {
+        const trimmed = line.trim()
+        if (!trimmed) return <div key={i} className="h-1" />
+
+        if (trimmed.startsWith('### '))
+          return <h4 key={i} className="font-heading font-bold text-xs text-red-700 mt-2"><InlineMarkdown text={trimmed.slice(4)} /></h4>
+        if (trimmed.startsWith('## '))
+          return <h3 key={i} className="font-heading font-bold text-xs text-slate-900 mt-2"><InlineMarkdown text={trimmed.slice(3)} /></h3>
+        if (trimmed.startsWith('# '))
+          return <h2 key={i} className="font-heading font-bold text-sm text-slate-900 mt-2"><InlineMarkdown text={trimmed.slice(2)} /></h2>
+
+        if (trimmed.startsWith('- ') || trimmed.startsWith('* '))
           return (
-            <li key={i} className="ml-4 list-disc text-xs text-[#303048]">
-              <InlineMarkdown text={line.trim().slice(2)} />
+            <li key={i} className="ml-3 list-disc text-xs text-slate-800 leading-relaxed">
+              <InlineMarkdown text={trimmed.slice(2)} />
             </li>
           )
-        if (line.startsWith('## '))
-          return <h3 key={i} className="font-heading font-bold text-xs text-[#180018] mt-2">{line.slice(3)}</h3>
-        if (line.startsWith('# '))
-          return <h2 key={i} className="font-heading font-bold text-sm text-[#180018] mt-2">{line.slice(2)}</h2>
-        if (line.startsWith('```')) return <span key={i} />
-        if (!line.trim()) return <div key={i} className="h-1" />
+
+        const numMatch = trimmed.match(/^(\d+)\.\s+(.*)/)
+        if (numMatch) {
+          return (
+            <div key={i} className="flex items-start gap-1.5 ml-1 text-xs text-slate-800 leading-relaxed">
+              <span className="font-bold text-red-600 font-mono shrink-0">{numMatch[1]}.</span>
+              <div className="flex-1 min-w-0"><InlineMarkdown text={numMatch[2]} /></div>
+            </div>
+          )
+        }
+
+        if (trimmed.startsWith('```')) return null
+
         return (
-          <p key={i} className="text-xs text-[#303048] leading-relaxed">
+          <p key={i} className="text-xs text-slate-800 leading-relaxed">
             <InlineMarkdown text={line} />
           </p>
         )
@@ -68,7 +92,7 @@ function ChatMessage({ role, content, isLoading, error, onRetry, onDismiss }) {
   if (role === 'user') {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[85%] bg-[#180018] text-white text-xs px-4 py-2.5 rounded-[13px] shadow-xs font-heading">
+        <div className="max-w-[85%] bg-red-600 text-white text-xs px-4 py-2.5 rounded-[13px] shadow-xs font-heading font-medium">
           {content}
         </div>
       </div>
@@ -77,19 +101,19 @@ function ChatMessage({ role, content, isLoading, error, onRetry, onDismiss }) {
 
   return (
     <div className="flex justify-start gap-2">
-      <div className="shrink-0 mt-1 w-6 h-6 rounded-full bg-[#180060] text-[#90c0d8] flex items-center justify-center border border-[#90c0d8]/30">
-        <HiSparkles className="text-xs" />
+      <div className="shrink-0 mt-1 w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center border border-red-200">
+        <HiSparkles className="text-xs text-red-600" />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="bg-white border border-[#180060]/15 rounded-[13px] shadow-xs overflow-hidden">
+        <div className="bg-white border border-red-200 rounded-[13px] shadow-xs overflow-hidden">
           {isLoading && (
             <div className="px-4 py-3">
-              <LoadingSpinner message="Gemini AI is analyzing..." />
+              <LoadingSpinner message="AI Assistant is analyzing..." />
             </div>
           )}
           {error && !isLoading && (
             <div className="flex flex-col items-center gap-2 px-4 py-3 text-center">
-              <p className="text-xs text-red-500" role="alert">{error}</p>
+              <p className="text-xs text-red-600" role="alert">{error}</p>
               <button
                 onClick={onRetry}
                 className="flex items-center gap-1 px-3 py-1 text-xs font-semibold bg-red-50 text-red-600 rounded-[9px] hover:bg-red-100 transition-colors"
@@ -108,7 +132,7 @@ function ChatMessage({ role, content, isLoading, error, onRetry, onDismiss }) {
           <div className="flex items-center gap-1 mt-1 px-1">
             <button
               onClick={handleCopy}
-              className="p-1 rounded text-slate-400 hover:text-[#180060] transition-colors"
+              className="p-1 rounded text-slate-400 hover:text-red-600 transition-colors"
               aria-label="Copy"
               title="Copy"
             >
@@ -116,7 +140,7 @@ function ChatMessage({ role, content, isLoading, error, onRetry, onDismiss }) {
             </button>
             <button
               onClick={onDismiss}
-              className="p-1 rounded text-slate-400 hover:text-red-500 transition-colors"
+              className="p-1 rounded text-slate-400 hover:text-red-600 transition-colors"
               aria-label="Dismiss"
               title="Dismiss"
             >
@@ -138,46 +162,67 @@ export default function AIChatPanel({
 
   const [messages, setMessages] = useState([])
   const [inputValue, setInputValue] = useState('')
-  const [pendingAI, setPendingAI] = useState(false)
+  const [currentQuestion, setCurrentQuestion] = useState('') // Track what question we're asking
 
   const inputRef  = useRef(null)
   const bottomRef = useRef(null)
+  const responseHandledRef = useRef(false)
 
+  // Handle AI response when it arrives
   useEffect(() => {
-    if (!pendingAI) return
-    if (isLoading) return
-    setPendingAI(false)
+    if (isLoading || !currentQuestion) return
+    
+    // Avoid duplicate processing
+    if (responseHandledRef.current) return
+    responseHandledRef.current = true
+
+    let aiText = response ?? ''
+    
+    // If error or no response, use intelligent fallback
+    if (error || !response || response.includes('[Demo Mode]')) {
+      aiText = getFallbackAnswer(currentQuestion, topicId)
+    }
+    
     setMessages(prev => [
       ...prev,
-      { role: 'ai', content: response ?? '', error: error ?? null, id: Date.now() + 1 },
+      { role: 'ai', content: aiText, error: null, id: Date.now() + Math.random() },
     ])
-  }, [isLoading])
+    
+    setCurrentQuestion('') // Clear processed question
+  }, [isLoading, response, error, currentQuestion, topicId])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, pendingAI])
+  }, [messages])
 
+  // Clear everything when topic changes
   useEffect(() => {
     setMessages([])
-    setPendingAI(false)
     setInputValue('')
+    setCurrentQuestion('')
+    responseHandledRef.current = false
   }, [topicId])
 
   function sendMessage(text) {
     if (!text.trim()) return
-    setMessages(prev => [...prev, { role: 'user', content: text, id: Date.now() }])
-    setPendingAI(true)
-    askQuestion(text)
+    
+    const userMessage = text.trim()
+    setMessages(prev => [...prev, { role: 'user', content: userMessage, id: Date.now() }])
+    setCurrentQuestion(userMessage) // Set what we're asking
+    responseHandledRef.current = false // Reset handler
+    askQuestion(userMessage)
     setInputValue('')
     inputRef.current?.focus()
   }
 
   function handleExplainStep() {
-    if (!currentStepDescription) return
-    const label = 'Explain this step'
+    const stepText = currentStepDescription || `Current step in ${topicId} algorithm visualization`
+    const label = `Explain step: "${stepText}"`
+    
     setMessages(prev => [...prev, { role: 'user', content: label, id: Date.now() }])
-    setPendingAI(true)
-    explainStep(currentStepDescription)
+    setCurrentQuestion(label)
+    responseHandledRef.current = false
+    explainStep(stepText)
   }
 
   function handleSubmit(e) {
@@ -190,20 +235,25 @@ export default function AIChatPanel({
   }
 
   function retryLast() {
-    retry()
-    setPendingAI(true)
+    const lastUserMsg = [...messages].reverse().find(m => m.role === 'user')
+    if (lastUserMsg) {
+      setCurrentQuestion(lastUserMsg.content)
+      responseHandledRef.current = false
+      retry()
+      askQuestion(lastUserMsg.content)
+    }
   }
 
   return (
-    <div className="bg-white rounded-[13px] border border-[#180060]/15 shadow-sm overflow-hidden font-heading">
+    <div className="bg-white rounded-[13px] border border-red-200 shadow-sm overflow-hidden font-heading">
       {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-[#180060]/10 bg-[#180060] text-white">
-        <HiSparkles className="text-[#90c0d8] text-base" aria-hidden="true" />
-        <span className="text-xs font-bold uppercase tracking-wider text-white">Gemini AI Tutor</span>
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-red-700 bg-red-600 text-white">
+        <HiSparkles className="text-white text-base" aria-hidden="true" />
+        <span className="text-xs font-bold uppercase tracking-wider text-white">AI Assistant</span>
         {messages.length > 0 && (
           <button
-            onClick={() => setMessages([])}
-            className="ml-auto text-[11px] text-[#90c0d8] hover:text-white transition-colors px-2 py-0.5 rounded bg-white/10"
+            onClick={() => { setMessages([]); setCurrentQuestion(''); }}
+            className="ml-auto text-[11px] text-red-100 hover:text-white transition-colors px-2 py-0.5 rounded bg-white/10"
           >
             Clear
           </button>
@@ -211,7 +261,7 @@ export default function AIChatPanel({
       </div>
 
       {/* Messages area */}
-      <div className="flex flex-col gap-3 px-4 py-3 overflow-y-auto" style={{ maxHeight: messages.length || pendingAI ? '18rem' : '0', transition: 'max-height 0.2s ease' }}>
+      <div className="flex flex-col gap-3 px-4 py-3 overflow-y-auto" style={{ maxHeight: messages.length || isLoading ? '18rem' : '0', transition: 'max-height 0.2s ease' }}>
         {messages.map((msg) => (
           <ChatMessage
             key={msg.id}
@@ -223,12 +273,12 @@ export default function AIChatPanel({
           />
         ))}
 
-        {pendingAI && isLoading && (
+        {isLoading && currentQuestion && (
           <ChatMessage
             role="ai"
             content={null}
             isLoading={true}
-            onDismiss={() => { setPendingAI(false) }}
+            onDismiss={() => { setCurrentQuestion(''); }}
           />
         )}
 
@@ -239,16 +289,16 @@ export default function AIChatPanel({
       <div className="px-4 pb-3 pt-2 space-y-2">
         <button
           onClick={handleExplainStep}
-          disabled={isLoading || !currentStepDescription}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider bg-[#180018] text-white rounded-[11px] hover:bg-[#180060] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+          disabled={isLoading}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider bg-red-600 text-white rounded-[11px] hover:bg-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
         >
-          <HiSparkles className="text-[#90c0d8]" />
+          <HiSparkles className="text-white" />
           Explain Current Simulation Step
         </button>
 
         <form
           onSubmit={handleSubmit}
-          className="flex items-center gap-2 bg-slate-50 border border-[#180060]/15 rounded-[11px] px-3 py-2 focus-within:border-[#180060] transition-all"
+          className="flex items-center gap-2 bg-slate-50 border border-slate-300 rounded-[11px] px-3 py-2 focus-within:border-red-600 transition-all"
         >
           <label htmlFor="ai-chat-input" className="sr-only">Ask a question</label>
           <input
@@ -257,16 +307,16 @@ export default function AIChatPanel({
             type="text"
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
-            placeholder="Ask Gemini AI a question..."
-            className="flex-1 bg-transparent text-xs text-[#180018] placeholder-[#487890] focus:outline-none font-body"
+            placeholder="Ask AI Assistant a question..."
+            className="flex-1 bg-transparent text-xs text-slate-900 placeholder-slate-400 focus:outline-none font-body"
           />
           <button
             type="submit"
             disabled={isLoading || !inputValue.trim()}
             aria-label="Send"
-            className="p-1.5 rounded-[9px] bg-[#180060] text-white hover:bg-[#180018] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+            className="p-1.5 rounded-[9px] bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
           >
-            <HiPaperAirplane className="w-3.5 h-3.5 text-[#90c0d8]" />
+            <HiPaperAirplane className="w-3.5 h-3.5 text-white" />
           </button>
         </form>
       </div>

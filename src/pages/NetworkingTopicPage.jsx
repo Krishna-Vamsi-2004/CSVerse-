@@ -150,20 +150,42 @@ export default function NetworkingTopicPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-5 space-y-4">
-      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-slate-400">
-        <Link to="/app/networking" className="flex items-center gap-1 hover:text-emerald-600 transition-colors">
-          <HiArrowLeft aria-hidden="true" /> Networking
-        </Link>
-        <span>/</span>
-        <span className="flex items-center gap-1 text-slate-700 font-medium">
-          <span aria-hidden="true">{topic.icon}</span> {topic.label}
-        </span>
-      </nav>
+      {/* Prominent Back Navigation Bar */}
+      <div className="flex items-center justify-between gap-4 flex-wrap bg-white rounded-2xl p-4 shadow-sm border border-red-100">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/app/networking')}
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded-xl font-heading font-bold text-sm transition-all duration-200 shadow-sm hover:shadow-md group"
+          >
+            <HiArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span>Back to Networking</span>
+          </button>
+
+          <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+
+          <nav aria-label="Breadcrumb" className="hidden sm:flex items-center gap-2 text-sm text-slate-500 font-medium">
+            <Link to="/app" className="hover:text-red-600 transition-colors">Home</Link>
+            <span>/</span>
+            <Link to="/app/networking" className="hover:text-red-600 transition-colors">Computer Networks</Link>
+            <span>/</span>
+            <span className="flex items-center gap-1 text-slate-900 font-bold">
+              <span aria-hidden="true">{topic.icon}</span> {topic.label}
+            </span>
+          </nav>
+        </div>
+
+        <button
+          onClick={() => navigate(-1)}
+          className="px-3 py-1.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-700 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1"
+        >
+          <span>← Previous Page</span>
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-slate-100 bg-slate-50 shrink-0">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Visual Area</span>
+        <div className="lg:col-span-2 bg-white rounded-2xl border-2 border-red-600 shadow-sm overflow-hidden flex flex-col">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-red-100 bg-red-50/50 shrink-0">
+            <span className="text-xs font-bold text-red-600 uppercase tracking-wider font-mono">Visual Area</span>
           </div>
           <div className="flex-1 px-6 py-6 overflow-y-auto">
             <TopicViz topicId={topicId} topic={topic} />
@@ -184,21 +206,11 @@ export default function NetworkingTopicPage() {
           )}
           <button
             onClick={() => navigate(`/app/networking/${topicId}/quiz`, { state: { returnTo: `/app/networking/${topicId}` } })}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1 shrink-0"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-red-600 rounded-2xl text-sm font-bold text-red-600 hover:bg-red-600 hover:text-white shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-1 shrink-0"
           >
-            <HiAcademicCap className="text-emerald-500" aria-hidden="true" />
+            <HiAcademicCap className="text-current" aria-hidden="true" />
             {quizResult ? 'Retake Quiz' : 'Take Quiz'}
           </button>
-        </div>
-      </div>
-
-      <div className="flex justify-center">
-        <div className="w-full lg:w-2/3">
-          <AIChatPanel
-            moduleId="networking"
-            topicId={topicId}
-            currentStepDescription={`Learning about ${topic.label} in Computer Networks.`}
-          />
         </div>
       </div>
     </main>

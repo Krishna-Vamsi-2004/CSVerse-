@@ -152,7 +152,7 @@ export default function QuizPage() {
               </div>
               <div className="space-y-1">
                 <h2 className="text-xl font-bold text-[#180018]">Ready to test your knowledge?</h2>
-                <p className="text-xs text-[#487890] font-body">5 Gemini AI-generated MCQ questions about {topic?.label ?? topicId}</p>
+                <p className="text-xs text-[#487890] font-body">5 AI-generated MCQ questions about {topic?.label ?? topicId}</p>
               </div>
               <button
                 onClick={startQuiz}
@@ -166,7 +166,7 @@ export default function QuizPage() {
           {/* LOADING */}
           {phase === 'loading' && (
             <div className="py-12">
-              <LoadingSpinner message="Gemini AI is crafting questions..." />
+              <LoadingSpinner message="AI Assistant is crafting questions..." />
             </div>
           )}
 
